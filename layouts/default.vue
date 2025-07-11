@@ -2,24 +2,16 @@
   <div class="app">
     <TheHeader />
     <main class="main">
-      <NuxtPage />
+      <slot></slot>
     </main>
   </div>
 </template>
 
 <script setup lang="ts">
-// Your component logic here
+// Компоненты импортируются автоматически
 </script>
 
 <style lang="scss">
-html,
-body {
-  margin: 0;
-  padding: 0;
-  background-color: #f9fafb;
-  min-height: 100vh;
-}
-
 .app {
   min-height: 100vh;
   display: flex;
@@ -28,11 +20,6 @@ body {
 
 .main {
   flex: 1;
-}
-
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 1rem;
+  padding: $spacing-large 0;
 }
 </style>
