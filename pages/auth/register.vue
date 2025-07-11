@@ -1,179 +1,193 @@
 <template>
-  <div class="register-page">
-    <div class="register-container">
-      <h1>Регистрация</h1>
-      <form @submit.prevent="handleRegister" class="register-form">
-        <div class="form-group">
-          <label for="name">Имя</label>
-          <input
-            type="text"
-            id="name"
-            v-model="name"
-            required
-            placeholder="Введите ваше имя"
-          />
+  <div class="auth-page">
+    <div class="container">
+      <div class="auth-form">
+        <h1>Регистрация</h1>
+        <form @submit.prevent="handleRegister">
+          <div class="form-group">
+            <label for="name">Имя</label>
+            <input
+              id="name"
+              v-model="form.name"
+              type="text"
+              class="input-field"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input
+              id="email"
+              v-model="form.email"
+              type="email"
+              class="input-field"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="password">Пароль</label>
+            <input
+              id="password"
+              v-model="form.password"
+              type="password"
+              class="input-field"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="role">Роль</label>
+            <select id="role" v-model="form.role" class="input-field" required>
+              <option value="customer">Заказчик</option>
+              <option value="provider">Исполнитель</option>
+            </select>
+          </div>
+
+          <div v-if="error" class="error-message">
+            {{ error }}
+          </div>
+
+          <button type="submit" class="btn btn-primary" :disabled="loading">
+            {{ loading ? "Регистрация..." : "Зарегистрироваться" }}
+          </button>
+        </form>
+
+        <div class="auth-links">
+          <p>
+            Уже есть аккаунт?
+            <NuxtLink to="/auth/login">Войти</NuxtLink>
+          </p>
         </div>
-        <div class="form-group">
-          <label for="email">Email</label>
-          <input
-            type="email"
-            id="email"
-            v-model="email"
-            required
-            placeholder="Введите email"
-          />
-        </div>
-        <div class="form-group">
-          <label for="password">Пароль</label>
-          <input
-            type="password"
-            id="password"
-            v-model="password"
-            required
-            placeholder="Введите пароль"
-          />
-        </div>
-        <div class="form-group">
-          <label for="role">Роль</label>
-          <select id="role" v-model="role" required>
-            <option value="customer">Заказчик</option>
-            <option value="executor">Исполнитель</option>
-          </select>
-        </div>
-        <button type="submit" class="register-button">
-          Зарегистрироваться
-        </button>
-        <NuxtLink to="/auth/login" class="login-link">
-          Уже есть аккаунт? Войти
-        </NuxtLink>
-      </form>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter } from "nuxt/app";
 import { useAuthStore } from "~/stores/auth";
-import type { UserRole } from "~/types/auth";
+import { useLocalData } from "~/composables/useLocalData";
 
-definePageMeta({
-  middleware: ["guest"],
-});
-
+const localData = useLocalData();
 const authStore = useAuthStore();
 const router = useRouter();
 
-const email = ref("");
-const password = ref("");
-const name = ref("");
-const role = ref<UserRole>("customer");
+const loading = ref(false);
 const error = ref("");
+
+const form = ref({
+  name: "",
+  email: "",
+  password: "",
+  role: "customer",
+});
 
 const handleRegister = async () => {
   try {
+    loading.value = true;
     error.value = "";
-    const result = await authStore.register({
-      email: email.value,
-      password: password.value,
-      name: name.value,
-      role: role.value,
-    });
 
-    if (result) {
-      router.push("/profile");
-    } else {
-      error.value = "Ошибка при регистрации";
+    // Check if email already exists
+    if (localData.findUserByEmail(form.value.email)) {
+      error.value = "Пользователь с таким email уже существует";
+      return;
     }
-  } catch (err) {
-    console.error("Register error:", err);
-    error.value = "Произошла ошибка при регистрации";
+
+    // Create new user
+    const newUser = {
+      id: (localData.getAllUsers().length + 1).toString(),
+      email: form.value.email,
+      password: form.value.password,
+      name: form.value.name,
+      role: form.value.role,
+      createdAt: new Date().toISOString(),
+    };
+
+    // Add user to data
+    await localData.addUser(newUser);
+
+    // Log in the new user
+    const userData = {
+      id: newUser.id,
+      email: newUser.email,
+      name: newUser.name,
+      role: newUser.role,
+    };
+    authStore.setUser(userData);
+    router.push("/profile");
+  } catch (e) {
+    error.value = "Ошибка при регистрации";
+    console.error(e);
+  } finally {
+    loading.value = false;
   }
 };
 </script>
 
 <style lang="scss" scoped>
-.register-page {
-  min-height: 100vh;
+.auth-page {
+  min-height: calc(100vh - 64px);
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 20px;
+  padding: 2rem 0;
+  background-color: var(--color-background-alt);
 }
 
-.register-container {
-  width: 100%;
+.auth-form {
   max-width: 400px;
-  padding: 30px;
-  border-radius: 8px;
-  background: var(--color-background-soft);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 
   h1 {
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+    font-weight: 600;
     text-align: center;
-    margin-bottom: 30px;
-    color: var(--color-heading);
   }
-}
 
-.register-form {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0.5rem;
 
   label {
+    font-size: 0.875rem;
     font-weight: 500;
-    color: var(--color-text);
-  }
-
-  input,
-  select {
-    padding: 10px;
-    border: 1px solid var(--color-border);
-    border-radius: 4px;
-    background: var(--color-background);
-    color: var(--color-text);
-
-    &:focus {
-      outline: none;
-      border-color: var(--color-primary);
-    }
-  }
-
-  select {
-    cursor: pointer;
+    color: var(--color-text-light);
   }
 }
 
-.register-button {
-  padding: 12px;
-  background: var(--color-primary);
-  color: white;
-  border: none;
-  border-radius: 4px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: opacity 0.2s;
-
-  &:hover {
-    opacity: 0.9;
-  }
+.error-message {
+  color: #ef4444;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
 }
 
-.login-link {
+.auth-links {
+  margin-top: 1.5rem;
   text-align: center;
-  color: var(--color-primary);
-  text-decoration: none;
-  font-size: 0.9em;
+  font-size: 0.875rem;
 
-  &:hover {
-    text-decoration: underline;
+  a {
+    color: var(--color-primary);
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
 }
 </style>

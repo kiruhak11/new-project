@@ -1,103 +1,141 @@
 <template>
   <div class="admin-services">
-    <h1>Управление услугами</h1>
+    <div class="container">
+      <h1>Управление услугами</h1>
 
-    <div class="services-list">
-      <div
-        v-for="service in pendingServices"
-        :key="service.id"
-        class="service-card"
-      >
-        <div class="service-card__header">
-          <h3>{{ service.title }}</h3>
-          <span class="service-card__status">На рассмотрении</span>
+      <div class="services-list">
+        <div
+          v-for="service in pendingServices"
+          :key="service.id"
+          class="service-card"
+        >
+          <div class="service-card__header">
+            <h3>{{ service.title }}</h3>
+            <span class="service-card__status">На рассмотрении</span>
+          </div>
+
+          <p class="service-card__description">{{ service.description }}</p>
+
+          <div class="service-card__details">
+            <p>
+              <strong>Цена:</strong>
+              {{ formatPrice(service.price) }}
+            </p>
+            <p>
+              <strong>Заказчик:</strong>
+              {{ getCustomerName(service.userId) }}
+            </p>
+            <p>
+              <strong>Дата создания:</strong>
+              {{ formatDate(service.createdAt) }}
+            </p>
+          </div>
+
+          <div class="service-card__actions">
+            <button
+              class="btn btn-primary"
+              @click="handleApprove(service.id)"
+              :disabled="loading"
+            >
+              Одобрить
+            </button>
+            <button
+              class="btn btn-secondary"
+              @click="handleReject(service.id)"
+              :disabled="loading"
+            >
+              Отклонить
+            </button>
+          </div>
         </div>
 
-        <p class="service-card__description">{{ service.description }}</p>
-
-        <div class="service-card__details">
-          <p>
-            <strong>Цена:</strong>
-            {{ service.price }} ₽
-          </p>
+        <div v-if="pendingServices.length === 0" class="empty-state">
+          Нет услуг на рассмотрении
         </div>
-
-        <div class="service-card__actions">
-          <button
-            class="btn btn-primary"
-            @click="handleApprove(service.id)"
-            :disabled="loading"
-          >
-            Одобрить
-          </button>
-          <button
-            class="btn btn-secondary"
-            @click="handleReject(service.id)"
-            :disabled="loading"
-          >
-            Отклонить
-          </button>
-        </div>
-      </div>
-
-      <div v-if="pendingServices.length === 0" class="empty-state">
-        Нет услуг на рассмотрении
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useServicesStore } from "~/stores/services";
+import { useAuthStore } from "~/stores/auth";
+import { useLocalData } from "~/composables/useLocalData";
+
 const servicesStore = useServicesStore();
 const authStore = useAuthStore();
-
-// В реальном приложении категории будут загружаться с сервера
-const categories = [
-  { id: 1, name: "Ремонт и строительство" },
-  { id: 2, name: "Красота и здоровье" },
-  { id: 3, name: "IT и программирование" },
-  { id: 4, name: "Обучение и репетиторство" },
-  { id: 5, name: "Уборка и помощь по дому" },
-  { id: 6, name: "Ремонт техники" },
-];
-
+const localData = useLocalData();
 const loading = ref(false);
-const pendingServices = computed(() => servicesStore.pendingServices);
 
-onMounted(async () => {
-  await servicesStore.fetchServices();
+const pendingServices = computed(() => {
+  return localData.getAllServices().filter((s) => s.status === "pending");
 });
+
+const formatPrice = (price: number) => {
+  return new Intl.NumberFormat("ru-RU", {
+    style: "currency",
+    currency: "RUB",
+    maximumFractionDigits: 0,
+  }).format(price);
+};
+
+const formatDate = (dateString: string) => {
+  return new Date(dateString).toLocaleDateString("ru-RU", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+};
+
+const getCustomerName = (userId: string) => {
+  const user = localData.findUserById(userId);
+  return user?.name || "Неизвестный пользователь";
+};
 
 async function handleApprove(id: string) {
   try {
-    await servicesStore.updateServiceStatus(id, "active");
+    loading.value = true;
+    await localData.updateService(id, { status: "approved" });
   } catch (error) {
     console.error("Error approving service:", error);
+  } finally {
+    loading.value = false;
   }
 }
 
 async function handleReject(id: string) {
   try {
-    await servicesStore.deleteService(id);
+    loading.value = true;
+    await localData.updateService(id, { status: "rejected" });
   } catch (error) {
     console.error("Error rejecting service:", error);
+  } finally {
+    loading.value = false;
   }
 }
 
+// Check auth state and fetch data
+onMounted(async () => {
+  if (!authStore.isAuthenticated) {
+    authStore.initAuth();
+  }
+
+  if (!authStore.isAdmin) {
+    return navigateTo("/");
+  }
+
+  await localData.fetchData();
+});
+
 definePageMeta({
-  middleware: ["auth"],
-  validate: async () => {
-    const authStore = useAuthStore();
-    return authStore.isAdmin;
-  },
+  middleware: ["admin"],
 });
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .admin-services {
-  padding: 2rem;
+  padding: 2rem 0;
 
   h1 {
     margin-bottom: 2rem;
@@ -112,9 +150,10 @@ definePageMeta({
 }
 
 .service-card {
-  background-color: var(--gray-100);
+  background-color: var(--color-background-alt);
   padding: 1.5rem;
   border-radius: 0.5rem;
+  border: 1px solid var(--color-border);
 
   &__header {
     display: flex;
@@ -129,7 +168,7 @@ definePageMeta({
   }
 
   &__status {
-    background-color: var(--accent-color);
+    background-color: var(--color-accent);
     color: white;
     padding: 0.25rem 0.75rem;
     border-radius: 1rem;
@@ -137,7 +176,7 @@ definePageMeta({
   }
 
   &__description {
-    color: var(--text-color);
+    color: var(--color-text);
     margin-bottom: 1rem;
     line-height: 1.5;
   }
@@ -147,12 +186,13 @@ definePageMeta({
 
     p {
       margin-bottom: 0.5rem;
-    }
-  }
+      color: var(--color-text-light);
 
-  &__price-type {
-    color: var(--gray-300);
-    font-size: 0.875rem;
+      strong {
+        color: var(--color-text);
+        margin-right: 0.5rem;
+      }
+    }
   }
 
   &__actions {
@@ -164,7 +204,10 @@ definePageMeta({
 .empty-state {
   text-align: center;
   padding: 3rem;
-  color: var(--gray-300);
+  color: var(--color-text-light);
   font-size: 1.125rem;
+  background-color: var(--color-background-alt);
+  border-radius: 0.5rem;
+  border: 1px solid var(--color-border);
 }
 </style>

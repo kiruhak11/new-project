@@ -15,6 +15,22 @@
       "name": "кирилл",
       "role": "admin",
       "createdAt": "2025-07-11T14:48:39.753Z"
+    },
+    {
+      "id": "3",
+      "email": "admin@servifle1x.com",
+      "password": "admin123",
+      "name": "kirill",
+      "role": "customer",
+      "createdAt": "2025-07-11T17:22:27.341Z"
+    },
+    {
+      "id": "4",
+      "email": "admin@serviflex.xn--com-yed",
+      "password": "admin123",
+      "name": "кирилл",
+      "role": "customer",
+      "createdAt": "2025-07-11T17:41:43.672Z"
     }
   ],
   "services": [
@@ -44,6 +60,15 @@
       "userId": "1",
       "status": "rejected",
       "createdAt": "2025-07-11T15:17:11.093Z"
+    },
+    {
+      "id": "603c79d5-e432-4d1e-8178-beb151b398c4",
+      "title": "Хочу очень",
+      "description": "Много денег",
+      "price": 410,
+      "userId": "3",
+      "status": "pending",
+      "createdAt": "2025-07-11T17:30:02.126Z"
     }
   ]
 }

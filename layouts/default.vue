@@ -1,25 +1,17 @@
 <template>
-  <div class="app">
+  <div>
     <TheHeader />
-    <main class="main">
-      <slot></slot>
+    <main>
+      <slot />
     </main>
   </div>
 </template>
 
-<script setup lang="ts">
-// Компоненты импортируются автоматически
-</script>
+<script setup lang="ts"></script>
 
-<style lang="scss">
-.app {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-.main {
-  flex: 1;
-  padding: $spacing-large 0;
+<style lang="scss" scoped>
+main {
+  min-height: calc(100vh - 64px);
+  padding-top: 64px;
 }
 </style>

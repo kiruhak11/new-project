@@ -231,7 +231,7 @@ const retryLoading = async () => {
     grid-template-columns: 1fr 1fr;
     gap: 3rem;
 
-    @media (max-width: $breakpoint-lg) {
+    @media (max-width: 1024px) {
       grid-template-columns: 1fr;
     }
   }
@@ -245,7 +245,7 @@ const retryLoading = async () => {
     width: 100%;
     height: 400px;
     object-fit: cover;
-    border-radius: $radius-lg;
+    border-radius: 16px;
     margin-bottom: 1rem;
   }
 
@@ -259,9 +259,9 @@ const retryLoading = async () => {
     width: 100%;
     height: 80px;
     object-fit: cover;
-    border-radius: $radius-md;
+    border-radius: 8px;
     cursor: pointer;
-    transition: all $transition-fast;
+    transition: all 0.3s ease;
 
     &:hover {
       transform: scale(1.05);
@@ -282,7 +282,7 @@ const retryLoading = async () => {
     display: flex;
     align-items: center;
     gap: 2rem;
-    color: lighten($dark, 20%);
+    color: #4b5563;
   }
 
   &__rating {
@@ -291,29 +291,29 @@ const retryLoading = async () => {
     gap: 0.5rem;
 
     .stars {
-      color: $warning;
+      color: #f59e0b;
     }
   }
 
   &__category {
     padding: 0.25rem 0.75rem;
-    background: $light;
-    border-radius: $radius-full;
+    background: #f3f4f6;
+    border-radius: 9999px;
     font-size: 0.875rem;
   }
 
   &__price-section {
     background: white;
     padding: 1.5rem;
-    border-radius: $radius-lg;
+    border-radius: 16px;
     margin-bottom: 2rem;
-    box-shadow: $shadow-md;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   }
 
   &__price {
     font-size: 2rem;
     font-weight: 700;
-    color: $primary;
+    color: #3b82f6;
     margin-bottom: 1rem;
 
     .currency {
@@ -332,7 +332,7 @@ const retryLoading = async () => {
     }
 
     p {
-      color: lighten($dark, 20%);
+      color: #4b5563;
       line-height: 1.6;
     }
   }
@@ -346,17 +346,17 @@ const retryLoading = async () => {
 
   &__tag {
     padding: 0.25rem 0.75rem;
-    background: $light;
-    border-radius: $radius-full;
+    background: #f3f4f6;
+    border-radius: 9999px;
     font-size: 0.875rem;
   }
 
   &__provider {
     background: white;
     padding: 1.5rem;
-    border-radius: $radius-lg;
+    border-radius: 16px;
     margin-bottom: 2rem;
-    box-shadow: $shadow-md;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 
     h2 {
       font-size: 1.5rem;
@@ -388,7 +388,7 @@ const retryLoading = async () => {
   }
 
   p {
-    color: lighten($dark, 20%);
+    color: #4b5563;
     margin-bottom: 1rem;
   }
 }
@@ -405,12 +405,12 @@ const retryLoading = async () => {
     display: block;
     font-size: 1.25rem;
     font-weight: 600;
-    color: $primary;
+    color: #3b82f6;
   }
 
   .label {
     font-size: 0.875rem;
-    color: lighten($dark, 20%);
+    color: #4b5563;
   }
 }
 
@@ -423,8 +423,8 @@ const retryLoading = async () => {
 .review-item {
   background: white;
   padding: 1.5rem;
-  border-radius: $radius-lg;
-  box-shadow: $shadow-sm;
+  border-radius: 16px;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 }
 
 .review-header {
@@ -456,17 +456,17 @@ const retryLoading = async () => {
   gap: 0.5rem;
 
   .stars {
-    color: $warning;
+    color: #f59e0b;
   }
 }
 
 .review-date {
-  color: lighten($dark, 30%);
+  color: #4b5563;
   font-size: 0.875rem;
 }
 
 .review-content {
-  color: lighten($dark, 20%);
+  color: #4b5563;
   line-height: 1.6;
 }
 </style>

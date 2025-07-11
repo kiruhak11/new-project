@@ -1,10 +1,18 @@
 import { defineStore } from "pinia";
-import type { User, LoginCredentials, RegisterData } from "~/types/auth";
+import { navigateTo } from "#app";
+
+interface User {
+  id: string;
+  email: string;
+  name: string;
+  role: string;
+}
 
 export const useAuthStore = defineStore("auth", {
   state: () => ({
     user: null as User | null,
     isAuthenticated: false,
+    isInitialized: false,
   }),
 
   getters: {
@@ -14,80 +22,37 @@ export const useAuthStore = defineStore("auth", {
   },
 
   actions: {
+    setUser(user: User) {
+      this.user = user;
+      this.isAuthenticated = true;
+      if (process.client) {
+        localStorage.setItem("user", JSON.stringify(user));
+      }
+    },
+
+    logout() {
+      this.user = null;
+      this.isAuthenticated = false;
+      if (process.client) {
+        localStorage.removeItem("user");
+      }
+      navigateTo("/auth/login");
+    },
+
     async initAuth() {
-      try {
-        // В реальном приложении здесь будет проверка токена и получение данных пользователя
-        const token = useCookie("auth_token").value;
-        if (token) {
-          // Имитируем получение данных пользователя
-          this.user = {
-            id: "user123",
-            email: "user@example.com",
-            name: "John Doe",
-            role: "customer",
-            phone: "+1234567890",
-            avatar: "/images/avatar.jpg",
-          };
-          this.isAuthenticated = true;
+      if (process.client && !this.isInitialized) {
+        const savedUser = localStorage.getItem("user");
+        if (savedUser) {
+          try {
+            const user = JSON.parse(savedUser);
+            this.setUser(user);
+          } catch (e) {
+            localStorage.removeItem("user");
+          }
         }
-      } catch (err) {
-        console.error("Auth initialization error:", err);
-        this.user = null;
-        this.isAuthenticated = false;
+        this.isInitialized = true;
       }
-    },
-
-    async login(credentials: LoginCredentials) {
-      try {
-        // В реальном приложении здесь будет запрос к API
-        this.user = {
-          id: "user123",
-          email: credentials.email,
-          name: "John Doe",
-          role: "customer",
-          phone: "+1234567890",
-          avatar: "/images/avatar.jpg",
-        };
-        this.isAuthenticated = true;
-        useCookie("auth_token").value = "mock_token";
-        return true;
-      } catch (err) {
-        console.error("Login error:", err);
-        return false;
-      }
-    },
-
-    async register(data: RegisterData) {
-      try {
-        // В реальном приложении здесь будет запрос к API
-        this.user = {
-          id: "user123",
-          email: data.email,
-          name: data.name,
-          role: data.role,
-          phone: data.phone,
-          avatar: "/images/avatar.jpg",
-        };
-        this.isAuthenticated = true;
-        useCookie("auth_token").value = "mock_token";
-        return true;
-      } catch (err) {
-        console.error("Register error:", err);
-        return false;
-      }
-    },
-
-    async logout() {
-      try {
-        // В реальном приложении здесь будет запрос к API
-        this.user = null;
-        this.isAuthenticated = false;
-        useCookie("auth_token").value = null;
-        return true;
-      } catch (err) {
-        console.error("Logout error:", err);
-        return false;
-      }
+      return this.isAuthenticated;
     },
   },
 });

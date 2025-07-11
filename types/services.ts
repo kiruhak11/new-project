@@ -24,24 +24,12 @@ export interface Service {
   description: string;
   price: number;
   userId: string;
-  status: "active" | "inactive";
-  image: string;
-  gallery?: string[];
-  category: string;
-  tags: string[];
-  reviews: Review[];
-  rating: number;
-  reviewsCount: number;
-  createdAt: Date;
-  updatedAt: Date;
-  provider: ServiceProvider;
+  status: "pending" | "approved" | "rejected";
+  createdAt: string;
 }
 
 export interface ServiceFormData {
   title: string;
   description: string;
   price: number;
-  image: string;
-  category: string;
-  tags: string[];
 }

@@ -1,5 +1,7 @@
 import { defineStore } from "pinia";
 import type { Service, ServiceFormData } from "~/types/services";
+import { useLocalData } from "~/composables/useLocalData";
+import { useAuthStore } from "~/stores/auth";
 
 export const useServicesStore = defineStore("services", {
   state: () => ({
@@ -14,7 +16,7 @@ export const useServicesStore = defineStore("services", {
       return this.services.filter((s) => s.userId === authStore.user?.id);
     },
     pendingServices(): Service[] {
-      return this.services.filter((s) => s.status === "inactive");
+      return this.services.filter((s) => s.status === "pending");
     },
   },
 
@@ -22,18 +24,8 @@ export const useServicesStore = defineStore("services", {
     async fetchServices() {
       this.loading = true;
       try {
-        const { data } = await useFetch<Service[]>("/api/services");
-        if (data.value) {
-          this.services = data.value.map((service) => ({
-            ...service,
-            createdAt: new Date(service.createdAt),
-            updatedAt: new Date(service.updatedAt),
-            reviews: service.reviews?.map((review) => ({
-              ...review,
-              createdAt: new Date(review.createdAt),
-            })),
-          }));
-        }
+        const localData = useLocalData();
+        this.services = localData.getAllServices();
       } catch (error) {
         console.error("Fetch services error:", error);
         this.error = "Failed to fetch services";
@@ -42,87 +34,22 @@ export const useServicesStore = defineStore("services", {
       }
     },
 
-    async fetchServiceById(id: string) {
+    async updateServiceStatus(serviceId: string, status: Service["status"]) {
       try {
-        const { data } = await useFetch<Service>(`/api/services/${id}`);
-        if (data.value) {
-          return {
-            ...data.value,
-            createdAt: new Date(data.value.createdAt),
-            updatedAt: new Date(data.value.updatedAt),
-            reviews: data.value.reviews?.map((review) => ({
-              ...review,
-              createdAt: new Date(review.createdAt),
-            })),
-          };
-        }
-        return null;
+        const localData = useLocalData();
+        await localData.updateService(serviceId, { status });
+        await this.fetchServices();
       } catch (error) {
-        console.error("Fetch service by id error:", error);
+        console.error("Update service status error:", error);
         throw error;
       }
     },
 
-    async createService(serviceData: ServiceFormData) {
+    async deleteService(serviceId: string) {
       try {
-        const { data } = await useFetch<Service>("/api/services", {
-          method: "POST",
-          body: serviceData,
-        });
-        if (data.value) {
-          const service = {
-            ...data.value,
-            createdAt: new Date(data.value.createdAt),
-            updatedAt: new Date(data.value.updatedAt),
-          };
-          this.services.push(service);
-          return service;
-        }
-        return null;
-      } catch (error) {
-        console.error("Create service error:", error);
-        throw error;
-      }
-    },
-
-    async updateService(id: string, serviceData: Partial<ServiceFormData>) {
-      try {
-        const { data } = await useFetch<Service>(`/api/services/${id}`, {
-          method: "PATCH",
-          body: serviceData,
-        });
-        if (data.value) {
-          const service = {
-            ...data.value,
-            createdAt: new Date(data.value.createdAt),
-            updatedAt: new Date(data.value.updatedAt),
-          };
-          const index = this.services.findIndex((s) => s.id === id);
-          if (index !== -1) {
-            this.services[index] = service;
-          }
-          return service;
-        }
-        return null;
-      } catch (error) {
-        console.error("Update service error:", error);
-        throw error;
-      }
-    },
-
-    async updateServiceStatus(id: string, status: Service["status"]) {
-      return this.updateService(id, { status } as Partial<ServiceFormData>);
-    },
-
-    async deleteService(id: string) {
-      try {
-        await useFetch(`/api/services/${id}`, {
-          method: "DELETE",
-        });
-        const index = this.services.findIndex((s) => s.id === id);
-        if (index !== -1) {
-          this.services.splice(index, 1);
-        }
+        const localData = useLocalData();
+        await localData.deleteService(serviceId);
+        await this.fetchServices();
       } catch (error) {
         console.error("Delete service error:", error);
         throw error;
