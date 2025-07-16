@@ -129,64 +129,181 @@ const handleRegister = async () => {
 
 <style lang="scss" scoped>
 .auth-page {
-  min-height: calc(100vh - 64px);
+  min-height: calc(100vh - 80px);
   display: flex;
   align-items: center;
-  padding: 2rem 0;
-  background-color: var(--color-background-alt);
+  padding: var(--spacing-xl) 0;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
+    animation: float 20s ease-in-out infinite;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 70%);
+    animation: float 25s ease-in-out infinite reverse;
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  33% { transform: translate(30px, -30px) rotate(120deg); }
+  66% { transform: translate(-20px, 20px) rotate(240deg); }
 }
 
 .auth-form {
-  max-width: 400px;
+  position: relative;
+  z-index: 10;
+  max-width: 450px;
   margin: 0 auto;
-  padding: 2rem;
-  background-color: white;
-  border-radius: 0.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: var(--spacing-3xl);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-xl);
 
   h1 {
-    margin-bottom: 1.5rem;
-    font-size: 1.5rem;
-    font-weight: 600;
+    margin-bottom: var(--spacing-2xl);
+    font-size: var(--text-3xl);
+    font-weight: var(--font-bold);
     text-align: center;
+    color: var(--color-text);
+    background: linear-gradient(135deg, var(--color-text), var(--color-primary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
   form {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: var(--spacing-lg);
   }
 }
 
 .form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  position: relative;
 
   label {
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: var(--color-text-light);
+    display: block;
+    margin-bottom: var(--spacing-sm);
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    color: var(--color-text);
+  }
+
+  .input-field {
+    width: 100%;
+    padding: var(--spacing-md) var(--spacing-lg);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    font-size: var(--text-base);
+    background: white;
+    transition: all var(--transition-fast);
+
+    &:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+      transform: translateY(-1px);
+    }
+
+    &::placeholder {
+      color: var(--color-text-muted);
+    }
+  }
+
+  select.input-field {
+    cursor: pointer;
+    
+    option {
+      padding: var(--spacing-sm);
+    }
   }
 }
 
 .error-message {
-  color: #ef4444;
-  font-size: 0.875rem;
-  margin-bottom: 1rem;
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--color-error);
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  margin-bottom: var(--spacing-md);
+}
+
+.btn {
+  padding: var(--spacing-md) var(--spacing-xl);
+  font-size: var(--text-base);
+  font-weight: var(--font-semibold);
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-fast);
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+  }
+
+  &:not(:disabled):hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  &:not(:disabled):active {
+    transform: translateY(0);
+  }
 }
 
 .auth-links {
-  margin-top: 1.5rem;
+  margin-top: var(--spacing-xl);
   text-align: center;
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
+  color: var(--color-text-light);
 
   a {
     color: var(--color-primary);
     text-decoration: none;
+    font-weight: var(--font-medium);
+    transition: all var(--transition-fast);
 
     &:hover {
+      color: var(--color-primary-dark);
       text-decoration: underline;
+    }
+  }
+}
+
+/* Mobile Responsive */
+@media (max-width: 767px) {
+  .auth-page {
+    padding: var(--spacing-lg) var(--spacing-md);
+    min-height: calc(100vh - 70px);
+  }
+
+  .auth-form {
+    padding: var(--spacing-2xl);
+    margin: 0 var(--spacing-md);
+
+    h1 {
+      font-size: var(--text-2xl);
     }
   }
 }

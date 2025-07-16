@@ -5,90 +5,21 @@
 </template>
 
 <script setup lang="ts">
-// Your component logic here
+// Set page metadata
+useHead({
+  titleTemplate: '%s - ServiFlex',
+  meta: [
+    { name: 'description', content: 'ServiFlex - современная платформа для поиска и предоставления услуг' },
+    { name: 'keywords', content: 'услуги, исполнители, заказчики, платформа, сервис' },
+    { property: 'og:type', content: 'website' },
+    { property: 'og:title', content: 'ServiFlex - Платформа услуг' },
+    { property: 'og:description', content: 'Найдите лучших специалистов для ваших задач' },
+    { name: 'twitter:card', content: 'summary_large_image' },
+  ],
+  link: [
+    { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+    { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
+    { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap' },
+  ]
+})
 </script>
-
-<style>
-:root {
-  --color-primary: #3b82f6;
-  --color-primary-dark: #2563eb;
-  --color-secondary: #64748b;
-  --color-accent: #f59e0b;
-  --color-text: #1e293b;
-  --color-text-light: #64748b;
-  --color-background: #ffffff;
-  --color-background-alt: #f8fafc;
-  --color-border: #e2e8f0;
-  --gray-100: #f1f5f9;
-  --gray-200: #e2e8f0;
-  --gray-300: #cbd5e1;
-  --gray-400: #94a3b8;
-  --spacing-small: 0.5rem;
-  --spacing-medium: 1rem;
-  --spacing-large: 2rem;
-}
-
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif;
-  color: var(--color-text);
-  background-color: var(--color-background);
-  margin: 0;
-  padding: 0;
-}
-
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 var(--spacing-medium);
-}
-
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.5rem 1rem;
-  border-radius: 0.375rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-  border: none;
-  text-decoration: none;
-}
-
-.btn-primary {
-  background-color: var(--color-primary);
-  color: white;
-}
-
-.btn-primary:hover {
-  background-color: var(--color-primary-dark);
-}
-
-.btn-secondary {
-  background-color: var(--color-secondary);
-  color: white;
-}
-
-.btn-text {
-  background: none;
-  color: var(--color-text);
-}
-
-.btn-text:hover {
-  color: var(--color-primary);
-}
-
-.input-field {
-  width: 100%;
-  padding: 0.5rem;
-  border: 1px solid var(--color-border);
-  border-radius: 0.375rem;
-  font-size: 1rem;
-}
-
-.input-field:focus {
-  outline: none;
-  border-color: var(--color-primary);
-}
-</style>

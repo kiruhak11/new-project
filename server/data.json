@@ -31,6 +31,22 @@
       "name": "кирилл",
       "role": "customer",
       "createdAt": "2025-07-11T17:41:43.672Z"
+    },
+    {
+      "id": "5",
+      "email": "123@123.123",
+      "password": "123",
+      "name": "123",
+      "role": "customer",
+      "createdAt": "2025-07-16T04:30:09.169Z"
+    },
+    {
+      "id": "6",
+      "email": "admin@servif123lex.com",
+      "password": "admin123",
+      "name": "кирилл",
+      "role": "customer",
+      "createdAt": "2025-07-16T04:48:27.371Z"
     }
   ],
   "services": [
@@ -67,8 +83,17 @@
       "description": "Много денег",
       "price": 410,
       "userId": "3",
-      "status": "pending",
+      "status": "rejected",
       "createdAt": "2025-07-11T17:30:02.126Z"
+    },
+    {
+      "id": "7c9529ab-591e-454a-871f-46f49caf1c25",
+      "title": "Сопрамат",
+      "description": "Решить задачи",
+      "price": 15000,
+      "userId": "6",
+      "status": "approved",
+      "createdAt": "2025-07-16T04:49:10.842Z"
     }
   ]
 }

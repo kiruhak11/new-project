@@ -43,28 +43,36 @@
               >
                 {{ getStatusText(service.status) }}
               </div>
-              <h3 class="service-card__title">{{ service.title }}</h3>
-              <p class="service-card__description">{{ service.description }}</p>
-              <div class="service-card__provider">
-                <div class="service-card__provider-info">
-                  <span class="service-card__provider-name">
-                    {{ getProviderName(service.userId) }}
-                  </span>
-                  <span class="service-card__date">
-                    {{ formatDate(service.createdAt) }}
-                  </span>
+              
+              <div class="service-card__content">
+                <h3 class="service-card__title">{{ service.title }}</h3>
+                <p class="service-card__description">{{ service.description }}</p>
+                
+                <div class="service-card__provider">
+                  <div class="service-card__provider-avatar">
+                    {{ getProviderInitials(service.userId) }}
+                  </div>
+                  <div class="service-card__provider-info">
+                    <span class="service-card__provider-name">
+                      {{ getProviderName(service.userId) }}
+                    </span>
+                    <span class="service-card__date">
+                      {{ formatDate(service.createdAt) }}
+                    </span>
+                  </div>
                 </div>
-              </div>
-              <div class="service-card__footer">
-                <div class="service-card__price">
-                  <span class="amount">{{ formatPrice(service.price) }}</span>
+                
+                <div class="service-card__footer">
+                  <div class="service-card__price">
+                    <span class="amount">{{ formatPrice(service.price) }}</span>
+                  </div>
+                  <button
+                    v-if="isCustomer && service.status === 'approved'"
+                    class="btn btn-primary btn--sm"
+                  >
+                    Заказать
+                  </button>
                 </div>
-                <button
-                  v-if="isCustomer && service.status === 'approved'"
-                  class="btn btn-primary"
-                >
-                  Заказать
-                </button>
               </div>
             </div>
           </div>
@@ -111,6 +119,17 @@ const users = computed(() => localData.getAllUsers());
 const getProviderName = (userId: string) => {
   const user = users.value.find((u) => u.id === userId);
   return user ? user.name : "Неизвестный пользователь";
+};
+
+const getProviderInitials = (userId: string) => {
+  const user = users.value.find((u) => u.id === userId);
+  if (!user || !user.name) return "?";
+  return user.name
+    .split(" ")
+    .map(word => word.charAt(0))
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
 };
 
 const getStatusText = (status: string) => {
@@ -187,169 +206,371 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .services-page {
-  padding: 2rem 0;
+  padding: var(--spacing-3xl) 0;
+  background: var(--color-background-alt);
+  min-height: calc(100vh - 80px);
 
   &__header {
-    margin-bottom: 2rem;
+    margin-bottom: var(--spacing-3xl);
+    text-align: center;
+
+    @media (min-width: 768px) {
+      text-align: left;
+    }
   }
 
   &__title {
-    font-size: 2rem;
-    font-weight: 700;
-    margin-bottom: 1.5rem;
-    color: #1f2937;
+    font-size: clamp(var(--text-3xl), 5vw, var(--text-5xl));
+    font-weight: var(--font-bold);
+    margin-bottom: var(--spacing-lg);
+    color: var(--color-text);
+    background: linear-gradient(135deg, var(--color-text), var(--color-primary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
   &__filters {
     display: flex;
-    gap: 1rem;
+    gap: var(--spacing-md);
     flex-wrap: wrap;
+    justify-content: center;
+
+    @media (min-width: 768px) {
+      justify-content: flex-start;
+    }
   }
 }
 
 .input-field {
   background: white;
-  padding: 0.75rem 1rem;
-  border: 1px solid #e2e8f0;
-  border-radius: 0.5rem;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
   min-width: 200px;
-  transition: all 0.2s;
+  font-size: var(--text-base);
+  font-weight: var(--font-medium);
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-sm);
 
   &:focus {
     outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+    transform: translateY(-1px);
+  }
+
+  &::placeholder {
+    color: var(--color-text-muted);
+  }
+
+  @media (max-width: 767px) {
+    width: 100%;
+    min-width: auto;
   }
 }
 
 .services-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 2rem;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-xl);
 }
 
 .service-card {
   background: white;
-  border-radius: 1rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  padding: 1.5rem;
-  transition: transform 0.2s, box-shadow 0.2s;
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition-normal);
   position: relative;
   overflow: hidden;
+  border: 1px solid var(--color-border-light);
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-xl);
+    border-color: var(--color-primary-light);
   }
 
   &__status {
     position: absolute;
-    top: 0;
-    right: 0;
-    padding: 0.25rem 1rem;
-    font-size: 0.875rem;
-    font-weight: 500;
+    top: var(--spacing-md);
+    right: var(--spacing-md);
+    padding: var(--spacing-xs) var(--spacing-md);
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
     color: white;
+    border-radius: var(--radius-xl);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    z-index: 10;
 
     &--approved {
-      background-color: #22c55e;
+      background: linear-gradient(135deg, var(--color-success), #059669);
     }
 
     &--rejected {
-      background-color: #ef4444;
+      background: linear-gradient(135deg, var(--color-error), #dc2626);
     }
 
     &--pending {
-      background-color: #f59e0b;
+      background: linear-gradient(135deg, var(--color-warning), #d97706);
     }
   }
 
+  &__content {
+    padding: var(--spacing-xl);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
   &__title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #1f2937;
-    margin-bottom: 0.5rem;
-    margin-top: 1.5rem;
+    font-size: var(--text-xl);
+    font-weight: var(--font-semibold);
+    color: var(--color-text);
+    margin-bottom: var(--spacing-md);
+    margin-top: var(--spacing-lg);
+    line-height: var(--leading-tight);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   &__description {
-    color: #4b5563;
-    font-size: 0.875rem;
-    line-height: 1.5;
-    margin-bottom: 1rem;
+    color: var(--color-text-light);
+    font-size: var(--text-sm);
+    line-height: var(--leading-relaxed);
+    margin-bottom: var(--spacing-lg);
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   &__provider {
     display: flex;
     align-items: center;
-    margin-bottom: 1rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid #e5e7eb;
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing-lg);
+    border-bottom: 1px solid var(--color-border-light);
+  }
+
+  &__provider-avatar {
+    width: 2.5rem;
+    height: 2.5rem;
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: var(--font-semibold);
+    font-size: var(--text-sm);
+    margin-right: var(--spacing-md);
   }
 
   &__provider-info {
     flex: 1;
+    min-width: 0;
   }
 
   &__provider-name {
     display: block;
-    font-weight: 500;
-    color: #1f2937;
-    margin-bottom: 0.25rem;
+    font-weight: var(--font-medium);
+    color: var(--color-text);
+    margin-bottom: var(--spacing-xs);
+    font-size: var(--text-sm);
   }
 
   &__date {
-    font-size: 0.875rem;
-    color: #6b7280;
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
   }
 
   &__footer {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: var(--spacing-md);
+    margin-top: auto;
   }
 
   &__price {
     .amount {
-      font-size: 1.25rem;
-      font-weight: 600;
-      color: #1f2937;
+      font-size: var(--text-2xl);
+      font-weight: var(--font-bold);
+      color: var(--color-primary);
+      background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
   }
 }
 
 .empty-state {
   text-align: center;
-  padding: 4rem 0;
+  padding: var(--spacing-3xl) 0;
+  background: white;
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-md);
+
+  &__icon {
+    width: 4rem;
+    height: 4rem;
+    margin: 0 auto var(--spacing-lg);
+    background: var(--color-background-alt);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-muted);
+
+    svg {
+      width: 2rem;
+      height: 2rem;
+    }
+  }
 
   p {
-    font-size: 1.25rem;
-    color: #6b7280;
-    margin-bottom: 1rem;
+    font-size: var(--text-lg);
+    color: var(--color-text-light);
+    margin-bottom: var(--spacing-lg);
+    font-weight: var(--font-medium);
   }
 }
 
 .btn {
   display: inline-flex;
   align-items: center;
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  font-weight: 500;
-  transition: all 0.2s;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--radius-lg);
+  font-weight: var(--font-semibold);
+  font-size: var(--text-sm);
+  transition: all var(--transition-fast);
   cursor: pointer;
   border: none;
+  text-decoration: none;
+  white-space: nowrap;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+  }
 
   &-primary {
-    background: #3b82f6;
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
     color: white;
+    box-shadow: var(--shadow-sm);
 
-    &:hover {
-      background: #2563eb;
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
     }
+
+    &:active:not(:disabled) {
+      transform: translateY(0);
+    }
+  }
+
+  &--sm {
+    padding: var(--spacing-xs) var(--spacing-md);
+    font-size: var(--text-xs);
   }
 }
 
 .skeleton {
-  height: 300px;
+  background: white;
+  border-radius: var(--radius-2xl);
+  padding: var(--spacing-xl);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.4),
+      transparent
+    );
+    animation: shimmer 1.5s infinite;
+  }
+
+  &__header {
+    height: 1.5rem;
+    background: var(--color-border-light);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-md);
+  }
+
+  &__content {
+    height: 1rem;
+    background: var(--color-border-light);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-sm);
+
+    &:last-child {
+      width: 60%;
+    }
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Mobile Responsive */
+@media (max-width: 767px) {
+  .services-page {
+    padding: var(--spacing-2xl) 0;
+
+    &__header {
+      margin-bottom: var(--spacing-2xl);
+    }
+
+    &__filters {
+      flex-direction: column;
+      gap: var(--spacing-md);
+    }
+  }
+
+  .service-card {
+    &__content {
+      padding: var(--spacing-lg);
+    }
+
+    &__title {
+      font-size: var(--text-lg);
+      margin-top: var(--spacing-md);
+    }
+
+    &__footer {
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--spacing-md);
+
+      .btn {
+        width: 100%;
+      }
+    }
+  }
 }
 </style>

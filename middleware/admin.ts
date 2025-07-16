@@ -1,17 +1,17 @@
 import { useAuthStore } from "~/stores/auth";
-import { useLocalData } from "~/composables/useLocalData";
 
 export default defineNuxtRouteMiddleware(async (to) => {
   const authStore = useAuthStore();
-  const localData = useLocalData();
 
   // Initialize auth state if needed
-  if (process.client) {
+  if (process.client && !authStore.isInitialized) {
     await authStore.initAuth();
   }
 
-  // Fetch fresh data
-  await localData.fetchData();
+  // Wait a bit for auth to be properly initialized
+  if (process.client) {
+    await new Promise(resolve => setTimeout(resolve, 100));
+  }
 
   // Check if user is authenticated and is an admin
   if (!authStore.isAuthenticated || !authStore.isAdmin) {

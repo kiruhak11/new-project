@@ -1,17 +1,37 @@
 <template>
-  <div>
+  <div class="layout">
     <TheHeader />
-    <main>
+    <main class="main">
       <slot />
     </main>
+    <TheFooter />
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { useAuthStore } from "~/stores/auth";
+
+const authStore = useAuthStore();
+
+// Initialize auth on app start
+onMounted(() => {
+  authStore.initAuth();
+});
+</script>
 
 <style lang="scss" scoped>
-main {
-  min-height: calc(100vh - 64px);
-  padding-top: 64px;
+.layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main {
+  flex: 1;
+  padding-top: 80px;
+  
+  @media (max-width: 767px) {
+    padding-top: 70px;
+  }
 }
 </style>
