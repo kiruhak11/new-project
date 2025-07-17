@@ -40,7 +40,7 @@ export const useAuthStore = defineStore("auth", {
     },
 
     async initAuth() {
-      if (process.client && !this.isInitialized) {
+      if (process.client) {
         const savedUser = localStorage.getItem("user");
         if (savedUser) {
           try {

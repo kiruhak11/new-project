@@ -6,14 +6,19 @@
         <NuxtLink to="/" class="header__logo">
           <div class="header__logo-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 10V3L4 14h7v7l9-11h-7z"
+              />
             </svg>
           </div>
           <span class="header__logo-text">ServiFlex</span>
         </NuxtLink>
 
         <!-- Mobile Menu Button -->
-        <button 
+        <button
           class="header__mobile-toggle"
           @click="isMobileMenuOpen = !isMobileMenuOpen"
           :class="{ 'header__mobile-toggle--active': isMobileMenuOpen }"
@@ -24,17 +29,40 @@
         </button>
 
         <!-- Navigation -->
-        <nav class="header__nav" :class="{ 'header__nav--open': isMobileMenuOpen }">
+        <nav
+          class="header__nav"
+          :class="{ 'header__nav--open': isMobileMenuOpen }"
+        >
           <div class="header__nav-links">
             <NuxtLink to="/services" class="nav-link" @click="closeMobileMenu">
-              <svg class="nav-link__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+              <svg
+                class="nav-link__icon"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
               </svg>
               Услуги
             </NuxtLink>
             <NuxtLink to="/about" class="nav-link" @click="closeMobileMenu">
-              <svg class="nav-link__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              <svg
+                class="nav-link__icon"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
               </svg>
               О нас
             </NuxtLink>
@@ -44,36 +72,46 @@
           <div class="header__auth">
             <ClientOnly>
               <template v-if="!authStore.isAuthenticated">
-                <NuxtLink to="/auth/login" class="btn btn-ghost" @click="closeMobileMenu">
+                <NuxtLink
+                  to="/auth/login"
+                  class="btn btn-ghost"
+                  @click="closeMobileMenu"
+                >
                   Войти
                 </NuxtLink>
-                <NuxtLink to="/auth/register" class="btn btn-primary" @click="closeMobileMenu">
+                <NuxtLink
+                  to="/auth/register"
+                  class="btn btn-primary"
+                  @click="closeMobileMenu"
+                >
                   Регистрация
                 </NuxtLink>
               </template>
               <template v-else>
                 <div class="user-menu">
-                  <button
-                    class="user-menu__trigger"
-                    @click="toggleUserMenu"
-                  >
+                  <button class="user-menu__trigger" @click="toggleUserMenu">
                     <div class="user-menu__avatar">
                       {{ getInitials(authStore.user?.name) }}
                     </div>
                     <span class="user-menu__name">
                       {{ authStore.user?.name || "Профиль" }}
                     </span>
-                    <svg 
-                      class="user-menu__chevron" 
+                    <svg
+                      class="user-menu__chevron"
                       :class="{ 'user-menu__chevron--open': isUserMenuOpen }"
-                      fill="none" 
-                      stroke="currentColor" 
+                      fill="none"
+                      stroke="currentColor"
                       viewBox="0 0 24 24"
                     >
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M19 9l-7 7-7-7"
+                      />
                     </svg>
                   </button>
-                  
+
                   <Transition name="dropdown">
                     <div v-if="isUserMenuOpen" class="user-menu__dropdown">
                       <div class="user-menu__header">
@@ -81,62 +119,128 @@
                           {{ getInitials(authStore.user?.name) }}
                         </div>
                         <div class="user-menu__info">
-                          <div class="user-menu__name">{{ authStore.user?.name }}</div>
-                          <div class="user-menu__email">{{ authStore.user?.email }}</div>
+                          <div class="user-menu__name">
+                            {{ authStore.user?.name }}
+                          </div>
+                          <div class="user-menu__email">
+                            {{ authStore.user?.email }}
+                          </div>
                         </div>
                       </div>
-                      
+
                       <div class="user-menu__divider"></div>
-                      
-                      <NuxtLink to="/profile" class="dropdown-item" @click="closeUserMenu">
-                        <svg class="dropdown-item__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+
+                      <NuxtLink
+                        to="/profile"
+                        class="dropdown-item"
+                        @click="closeUserMenu"
+                      >
+                        <svg
+                          class="dropdown-item__icon"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                          />
                         </svg>
                         Мой профиль
                       </NuxtLink>
-                      
+
                       <NuxtLink
                         v-if="authStore.user?.role === 'customer'"
                         to="/services/my"
                         class="dropdown-item"
                         @click="closeUserMenu"
                       >
-                        <svg class="dropdown-item__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                        <svg
+                          class="dropdown-item__icon"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                          />
                         </svg>
                         Мои заказы
                       </NuxtLink>
-                      
+
                       <NuxtLink
                         v-if="authStore.user?.role === 'customer'"
                         to="/services/create"
                         class="dropdown-item"
                         @click="closeUserMenu"
                       >
-                        <svg class="dropdown-item__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                        <svg
+                          class="dropdown-item__icon"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                          />
                         </svg>
                         Создать заказ
                       </NuxtLink>
-                      
+
                       <NuxtLink
                         v-if="authStore.user?.role === 'admin'"
                         to="/admin/services"
                         class="dropdown-item"
                         @click="closeUserMenu"
                       >
-                        <svg class="dropdown-item__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        <svg
+                          class="dropdown-item__icon"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                          />
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                          />
                         </svg>
                         Управление услугами
                       </NuxtLink>
-                      
+
                       <div class="user-menu__divider"></div>
-                      
-                      <button @click="handleLogout" class="dropdown-item dropdown-item--danger">
-                        <svg class="dropdown-item__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+
+                      <button
+                        @click="handleLogout"
+                        class="dropdown-item dropdown-item--danger"
+                      >
+                        <svg
+                          class="dropdown-item__icon"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                          />
                         </svg>
                         Выйти
                       </button>
@@ -187,7 +291,7 @@ const getInitials = (name?: string) => {
   if (!name) return "U";
   return name
     .split(" ")
-    .map(word => word.charAt(0))
+    .map((word) => word.charAt(0))
     .join("")
     .toUpperCase()
     .slice(0, 2);
@@ -199,7 +303,10 @@ const handleClickOutside = (e: Event) => {
   if (!target.closest(".user-menu")) {
     isUserMenuOpen.value = false;
   }
-  if (!target.closest(".header__nav") && !target.closest(".header__mobile-toggle")) {
+  if (
+    !target.closest(".header__nav") &&
+    !target.closest(".header__mobile-toggle")
+  ) {
     isMobileMenuOpen.value = false;
   }
 };
@@ -244,6 +351,7 @@ onUnmounted(() => {
     align-items: center;
     justify-content: space-between;
     position: relative;
+    gap: var(--spacing-md);
   }
 
   &__logo {
@@ -266,7 +374,11 @@ onUnmounted(() => {
       display: flex;
       align-items: center;
       justify-content: center;
-      background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+      background: linear-gradient(
+        135deg,
+        var(--color-primary),
+        var(--color-primary-dark)
+      );
       border-radius: var(--radius-md);
       color: white;
 
@@ -277,7 +389,11 @@ onUnmounted(() => {
     }
 
     &-text {
-      background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+      background: linear-gradient(
+        135deg,
+        var(--color-primary),
+        var(--color-primary-dark)
+      );
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -360,6 +476,7 @@ onUnmounted(() => {
       opacity: 0;
       visibility: hidden;
       transition: all var(--transition-normal);
+      box-shadow: var(--shadow-lg);
 
       &--open {
         transform: translateY(0);
@@ -377,6 +494,7 @@ onUnmounted(() => {
         flex-direction: column;
         width: 100%;
         gap: var(--spacing-md);
+        align-items: stretch;
       }
     }
   }
@@ -390,6 +508,7 @@ onUnmounted(() => {
       width: 100%;
       justify-content: center;
       flex-wrap: wrap;
+      gap: var(--spacing-sm);
     }
   }
 }
@@ -453,7 +572,11 @@ onUnmounted(() => {
   &__avatar {
     width: 2rem;
     height: 2rem;
-    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+    background: linear-gradient(
+      135deg,
+      var(--color-primary),
+      var(--color-primary-dark)
+    );
     color: white;
     border-radius: 50%;
     display: flex;
@@ -471,7 +594,7 @@ onUnmounted(() => {
 
   &__name {
     font-size: var(--text-sm);
-    
+
     @media (max-width: 767px) {
       display: none;
     }

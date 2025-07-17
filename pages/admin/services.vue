@@ -20,22 +20,22 @@
       </div>
 
       <div class="admin-services__tabs">
-        <button 
-          class="tab-button" 
+        <button
+          class="tab-button"
           :class="{ 'tab-button--active': activeTab === 'pending' }"
           @click="activeTab = 'pending'"
         >
           На рассмотрении ({{ pendingServices.length }})
         </button>
-        <button 
-          class="tab-button" 
+        <button
+          class="tab-button"
           :class="{ 'tab-button--active': activeTab === 'approved' }"
           @click="activeTab = 'approved'"
         >
           Одобренные ({{ approvedServices.length }})
         </button>
-        <button 
-          class="tab-button" 
+        <button
+          class="tab-button"
           :class="{ 'tab-button--active': activeTab === 'rejected' }"
           @click="activeTab = 'rejected'"
         >
@@ -49,7 +49,10 @@
           :key="service.id"
           class="service-card"
         >
-          <div class="service-card__status" :class="`service-card__status--${service.status}`">
+          <div
+            class="service-card__status"
+            :class="`service-card__status--${service.status}`"
+          >
             {{ getStatusText(service.status) }}
           </div>
 
@@ -62,33 +65,52 @@
                 <div class="detail-item__icon">💰</div>
                 <div class="detail-item__content">
                   <span class="detail-item__label">Цена</span>
-                  <span class="detail-item__value">{{ formatPrice(service.price) }}</span>
+                  <span class="detail-item__value">{{
+                    formatPrice(service.price)
+                  }}</span>
                 </div>
               </div>
               <div class="detail-item">
                 <div class="detail-item__icon">👤</div>
                 <div class="detail-item__content">
                   <span class="detail-item__label">Заказчик</span>
-                  <span class="detail-item__value">{{ getCustomerName(service.userId) }}</span>
+                  <span class="detail-item__value">{{
+                    getCustomerName(service.userId)
+                  }}</span>
                 </div>
               </div>
               <div class="detail-item">
                 <div class="detail-item__icon">📅</div>
                 <div class="detail-item__content">
                   <span class="detail-item__label">Дата создания</span>
-                  <span class="detail-item__value">{{ formatDate(service.createdAt) }}</span>
+                  <span class="detail-item__value">{{
+                    formatDate(service.createdAt)
+                  }}</span>
                 </div>
               </div>
             </div>
 
-            <div v-if="service.status === 'pending'" class="service-card__actions">
+            <div
+              v-if="service.status === 'pending'"
+              class="service-card__actions"
+            >
               <button
                 class="btn btn-success"
                 @click="handleApprove(service.id)"
                 :disabled="loading"
               >
-                <svg class="btn__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                <svg
+                  class="btn__icon"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 13l4 4L19 7"
+                  />
                 </svg>
                 Одобрить
               </button>
@@ -97,8 +119,18 @@
                 @click="handleReject(service.id)"
                 :disabled="loading"
               >
-                <svg class="btn__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                <svg
+                  class="btn__icon"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
                 Отклонить
               </button>
@@ -126,7 +158,7 @@ import { useLocalData } from "~/composables/useLocalData";
 const authStore = useAuthStore();
 const localData = useLocalData();
 const loading = ref(false);
-const activeTab = ref('pending');
+const activeTab = ref("pending");
 
 // Computed properties for different service statuses
 const pendingServices = computed(() => {
@@ -143,11 +175,11 @@ const rejectedServices = computed(() => {
 
 const currentServices = computed(() => {
   switch (activeTab.value) {
-    case 'pending':
+    case "pending":
       return pendingServices.value;
-    case 'approved':
+    case "approved":
       return approvedServices.value;
-    case 'rejected':
+    case "rejected":
       return rejectedServices.value;
     default:
       return pendingServices.value;
@@ -191,14 +223,14 @@ const getStatusText = (status: string) => {
 
 const getEmptyStateText = () => {
   switch (activeTab.value) {
-    case 'pending':
-      return 'В данный момент нет услуг, ожидающих рассмотрения';
-    case 'approved':
-      return 'Нет одобренных услуг';
-    case 'rejected':
-      return 'Нет отклоненных услуг';
+    case "pending":
+      return "В данный момент нет услуг, ожидающих рассмотрения";
+    case "approved":
+      return "Нет одобренных услуг";
+    case "rejected":
+      return "Нет отклоненных услуг";
     default:
-      return 'Нет услуг';
+      return "Нет услуг";
   }
 };
 
@@ -227,19 +259,34 @@ async function handleReject(id: string) {
 
 // Initialize
 onMounted(async () => {
-  if (!authStore.isAuthenticated) {
+  // Инициализируем авторизацию если нужно
+  if (!authStore.isInitialized) {
     await authStore.initAuth();
   }
 
-  if (!authStore.isAdmin) {
+  // Ждем полной инициализации
+  let attempts = 0;
+  while (!authStore.isAuthenticated && attempts < 10) {
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    attempts++;
+  }
+
+  // Проверяем авторизацию
+  if (!authStore.isAuthenticated) {
+    return navigateTo("/auth/login");
+  }
+
+  // Проверяем роль админа
+  if (!authStore.user || authStore.user.role !== "admin") {
     return navigateTo("/");
   }
 
+  // Загружаем данные
   await localData.fetchData();
 });
 
 definePageMeta({
-  middleware: ["admin"],
+  // Убираем middleware
 });
 </script>
 
@@ -258,7 +305,11 @@ definePageMeta({
     font-weight: var(--font-bold);
     margin-bottom: var(--spacing-xl);
     color: var(--color-text);
-    background: linear-gradient(135deg, var(--color-text), var(--color-primary));
+    background: linear-gradient(
+      135deg,
+      var(--color-text),
+      var(--color-primary)
+    );
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;

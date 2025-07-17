@@ -14,8 +14,8 @@ import { useAuthStore } from "~/stores/auth";
 const authStore = useAuthStore();
 
 // Initialize auth on app start
-onMounted(() => {
-  authStore.initAuth();
+onMounted(async () => {
+  await authStore.initAuth();
 });
 </script>
 
@@ -29,7 +29,7 @@ onMounted(() => {
 .main {
   flex: 1;
   padding-top: 80px;
-  
+
   @media (max-width: 767px) {
     padding-top: 70px;
   }
